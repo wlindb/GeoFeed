@@ -12,9 +12,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.Task
+import com.google.android.gms.location.*
 import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
 import kotlin.random.Random
@@ -28,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     private var cityName = "Unknown city"
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
     private lateinit var geocoder: Geocoder
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,12 +36,50 @@ class MainActivity : AppCompatActivity() {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         geocoder = Geocoder(this)
-        getLastLocation()
+       // getLastLocation()
+        initLocationSubscription()
+
         postToList()
         val rv_recyclerView: RecyclerView = findViewById(R.id.rv_recyclerView) as RecyclerView
         rv_recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = RecyclerAdapter(titleList, descList, imageList)
+        }
+    }
+
+    private fun initLocationSubscription() {
+        Log.d("getLocationUpdates", "1")
+        locationRequest = LocationRequest.create().apply {
+            interval = 1000*5 // every 5 seconds
+            fastestInterval = 1000*5
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            maxWaitTime= 1000*6
+            smallestDisplacement = 3000f // User has to move 3km before update
+        }
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                Log.d("getLocationUpdates", "onLocationResult: inne")
+                locationResult ?: return
+
+                if (locationResult.locations.isNotEmpty()) {
+                    val location = locationResult.lastLocation
+                    Log.d("getLocationUpdates", "onLocationResult: ${location.latitude}, ${location.longitude}")
+                    updateSubTitle(getCityName(location))
+                }
+
+
+            }
+        }
+        Log.d("getLocationUpdates", "2")
+    }
+
+    private fun getCityName(location: Location): String {
+        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 10)
+        val address = addresses.find { address -> address.locality != null }
+        return if(address != null) {
+            address.locality
+        } else {
+            "Unknown City"
         }
     }
 
@@ -56,20 +94,18 @@ class MainActivity : AppCompatActivity() {
 
         if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
             && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 101)
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), 101)
             return
         }
-        locationTask.addOnSuccessListener { location ->
-            if(location == null) return@addOnSuccessListener
 
-            val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 10)
-            val address = addresses.find { address -> address.locality != null }
-            if(address != null) {
-                Log.d("location", "${address.locality}")
-                updateSubTitle(address.locality)
-            }
+        locationTask.addOnSuccessListener { location ->
+            Log.d("location", "getLastLocation: innan")
+            if(location == null) return@addOnSuccessListener
+            Log.d("location", "getLastLocation: ${location.latitude}, ${location.longitude}")
+            updateSubTitle(getCityName(location))
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
@@ -95,5 +131,33 @@ class MainActivity : AppCompatActivity() {
             addToList("Title $i", str.substring(
                 Random.nextInt(10, str.length-1)), R.mipmap.ic_launcher_round)
         }
+    }
+
+    private fun startLocationSubscription() {
+        // If location permissions not given, ask user for permission
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+            && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), 101)
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            null
+        )
+    }
+
+    private fun stopLocationSubscription() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopLocationSubscription()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startLocationSubscription()
     }
 }
