@@ -10,7 +10,15 @@ const mockData = [
         location: "Stockholm",
         district: "Östermalm",
         body: "This is the actual post ",
-        timestamp: Date.now(),
+        timestamp: Date.now().toString(),
+        comments: []
+    },
+    {
+        uuid: "E2E2E2E2E2E2E2E2",
+        location: "Stockholm",
+        district: "Östermalm",
+        body: "This is the actual post ",
+        timestamp: Date.now().toString(),
         comments: []
     },
     {
@@ -26,7 +34,15 @@ const mockData = [
         location: "Stockholm",
         district: "Östermalm",
         body: "This is the actual post ",
-        timestamp: Date.now(),
+        timestamp: Date.now().toString(),
+        comments: []
+    },
+    {
+        uuid: "E2E2E2E2E2E2E2E2",
+        location: "Stockholm",
+        district: "Östermalm",
+        body: "This is the actual post ",
+        timestamp: Date.now().toString(),
         comments: []
     },
     {
@@ -42,23 +58,7 @@ const mockData = [
         location: "Stockholm",
         district: "Östermalm",
         body: "This is the actual post ",
-        timestamp: Date.now(),
-        comments: []
-    },
-    {
-        uuid: "E2E2E2E2E2E2E2E2",
-        location: "Stockholm",
-        district: "Östermalm",
-        body: "This is the actual post ",
-        timestamp: Date.now(),
-        comments: []
-    },
-    {
-        uuid: "E2E2E2E2E2E2E2E2",
-        location: "Stockholm",
-        district: "Östermalm",
-        body: "This is the actual post ",
-        timestamp: Date.now(),
+        timestamp: Date.now().toString(),
         comments: []
     }
 ];
@@ -68,7 +68,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/posts', (req, res) => {
-    res.status(200).json(mockData)
+    res.status(200).json({posts: mockData})
 });
 
 app.get('/post', (req, res) => {

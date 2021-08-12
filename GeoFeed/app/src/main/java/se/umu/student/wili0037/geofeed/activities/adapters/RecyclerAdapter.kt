@@ -7,8 +7,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import se.umu.student.wili0037.geofeed.R
+import se.umu.student.wili0037.geofeed.model.Post
 
-class RecyclerAdapter (private var titles: List<String>, private var details: List<String>, private var images: List<Int>) :
+
+class RecyclerAdapter (private var posts: List<Post>) :
 RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,12 +32,12 @@ RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemDistrict.text = titles[position]
-        holder.itemBody.text = details[position]
-        holder.itemNrComment.text = "3"
+        holder.itemDistrict.text = posts[position].district
+        holder.itemBody.text = posts[position].body
+        holder.itemNrComment.text = posts[position].comments.size.toString()
     }
 
     override fun getItemCount(): Int {
-        return titles.size
+        return posts.size
     }
 }
