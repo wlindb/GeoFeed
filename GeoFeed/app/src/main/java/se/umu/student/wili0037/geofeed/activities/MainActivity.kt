@@ -10,15 +10,23 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
+import se.umu.student.wili0037.geofeed.MainViewModel
+import se.umu.student.wili0037.geofeed.MainViewModelFactory
 import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
+import se.umu.student.wili0037.geofeed.repository.Repository
+import java.sql.Timestamp
 import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var viewModel: MainViewModel
 
     private var titleList = mutableListOf<String>()
     private var descList = mutableListOf<String>()
@@ -34,9 +42,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val repository = Repository()
+        val viewModelFactory = MainViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        viewModel.getPost()
+        viewModel.myResponse.observe(this, Observer { response ->
+            Log.d("Response", response.uuid)
+            Log.d("Response", response.location)
+            Log.d("Response", response.district)
+            Log.d("Response", response.body)
+            Log.d("Response", response.timestamp.toString())
+            Log.d("Response", response.comments.toString())
+        })
+
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         geocoder = Geocoder(this)
-       // getLastLocation()
         initLocationSubscription()
 
         postToList()
