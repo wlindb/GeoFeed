@@ -24,39 +24,39 @@ const mockData = [
     {
         uuid: "E2E2E2E2E2E2E2E2",
         location: "Stockholm",
-        district: "Östermalm",
+        district: "Vasastan",
         body: "This is the actual post ",
         timestamp: Date.now(),
         comments: []
     },
     {
         uuid: "E2E2E2E2E2E2E2E2",
-        location: "Stockholm",
-        district: "Östermalm",
+        location: "Örebro",
+        district: "Väster",
         body: "This is the actual post ",
         timestamp: Date.now().toString(),
         comments: []
     },
     {
         uuid: "E2E2E2E2E2E2E2E2",
-        location: "Stockholm",
-        district: "Östermalm",
+        location: "Örebro",
+        district: "Norr",
         body: "This is the actual post ",
         timestamp: Date.now().toString(),
         comments: []
     },
     {
         uuid: "E2E2E2E2E2E2E2E2",
-        location: "Stockholm",
-        district: "Östermalm",
+        location: "Örebro",
+        district: "Adolfsberg",
         body: "This is the actual post ",
         timestamp: Date.now(),
         comments: []
     },
     {
         uuid: "E2E2E2E2E2E2E2E2",
-        location: "Stockholm",
-        district: "Östermalm",
+        location: "Västerås",
+        district: "Malmaberg",
         body: "This is the actual post ",
         timestamp: Date.now().toString(),
         comments: []
@@ -67,8 +67,10 @@ app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-app.get('/posts', (req, res) => {
-    res.status(200).json({posts: mockData})
+app.get('/posts/:location', (req, res) => {
+    const { location } = req.params;
+    const posts = getByLocation(location);
+    res.status(200).json({posts})
 });
 
 app.get('/post', (req, res) => {
@@ -76,5 +78,7 @@ app.get('/post', (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Server listening at http://localhost:${port}`)
 })
+
+const getByLocation = location => mockData.filter(post => post.location.toUpperCase() === location.toUpperCase());
