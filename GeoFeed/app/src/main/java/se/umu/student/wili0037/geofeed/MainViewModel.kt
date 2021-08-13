@@ -39,10 +39,10 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
-    private fun getPosts() {
+    private fun getPosts(city: String) {
         viewModelScope.launch {
             Log.d("Respone", "getPosts: ${cityName.value}")
-            val response = repository.getPosts()
+            val response = repository.getPosts(city)
             responsePosts.value = response
         }
     }
@@ -73,7 +73,7 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         if (address.locality != cityName.value) {
             Log.d("Respone", "setCityNameFromLocation: ${address.locality}, ${cityName.value}")
             cityName.value = address.locality
-            getPosts()
+            getPosts(address.locality)
         }
     }
 
