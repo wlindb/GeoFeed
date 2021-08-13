@@ -28,11 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var geocoder: Geocoder
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,7 +35,6 @@ class MainActivity : AppCompatActivity() {
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        //viewModel.getPosts()
 
         viewModel.responsePosts.observe(this, Observer { response ->
             if(response.isSuccessful) {
@@ -54,50 +48,12 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Response", response.code().toString())
             }
         })
-
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        geocoder = Geocoder(this)
-        initLocationSubscription()
-    }
-
-    private fun initLocationSubscription() {
-        locationRequest = LocationRequest.create().apply {
-            interval = 1000*5 // every 5 seconds
-            fastestInterval = 1000*5
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            maxWaitTime= 1000*6
-            smallestDisplacement = 3000f // User has to move 3km before update
-        }
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                Log.d("getLocationUpdates", "onLocationResult: inne")
-                locationResult ?: return
-
-                if (locationResult.locations.isNotEmpty()) {
-                    val location = locationResult.lastLocation
-                    Log.d("getLocationUpdates", "onLocationResult: ${location.latitude}, ${location.longitude}")
-                    updateSubTitle(getCityName(location))
-                }
-
-
-            }
-        }
-    }
-
-    private fun getCityName(location: Location): String {
-        val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 10)
-        val address = addresses.find { address -> address.locality != null }
-        // ===========================
-        // Move this to other function
-        if ( address != null) {
-            viewModel.getPosts()
-        }
-        // ===========================
-        return if(address != null) {
-            address.locality
-        } else {
-            "Unknown City"
-        }
+        viewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        viewModel.geocoder = Geocoder(this)
+        viewModel.initLocationSubscription()
+        viewModel.cityName.observe(this, Observer { cityName ->
+            updateSubTitle(cityName)
+        })
     }
 
     private fun updateSubTitle(cityName: String) {
@@ -118,31 +74,13 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun startLocationSubscription() {
-        // If location permissions not given, ask user for permission
-        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION), 101)
-        }
-
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            null
-        )
-    }
-
-    private fun stopLocationSubscription() {
-        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-    }
-
     override fun onPause() {
         super.onPause()
-        stopLocationSubscription()
+        viewModel.stopLocationSubscription()
     }
 
     override fun onResume() {
         super.onResume()
-        startLocationSubscription()
+        viewModel.startLocationSubscription(this, this)
     }
 }
