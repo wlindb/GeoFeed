@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">GeoFeed</string>
+    <string name="new_post">Create new post</string>
+    <string name="whats_on_your_mind">"What's on your mind? "</string>
 </resources>

@@ -1,15 +1,14 @@
 package se.umu.student.wili0037.geofeed.activities
 
-import android.content.pm.PackageManager
+import android.content.Intent
 import android.location.Geocoder
-import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,8 +19,7 @@ import se.umu.student.wili0037.geofeed.MainViewModelFactory
 import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
 import se.umu.student.wili0037.geofeed.repository.Repository
-import java.sql.Timestamp
-import kotlin.random.Random
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -54,6 +52,13 @@ class MainActivity : AppCompatActivity() {
         viewModel.cityName.observe(this, Observer { cityName ->
             updateSubTitle(cityName)
         })
+
+        val fab: View = findViewById(R.id.floating_action_button)
+        fab.setOnClickListener { view ->
+            intent = Intent(this, CreatePostActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun updateSubTitle(cityName: String) {

@@ -73,6 +73,11 @@ app.get('/posts/:location', (req, res) => {
     res.status(200).json({posts})
 });
 
+app.post('post', (req, res) => {
+    const { uuid, location, district, body, timestamp, comments } = req.body;
+    res.status(200).json({msg: "Success"})
+});
+
 app.get('/post', (req, res) => {
     res.status(200).json(mockData[0])
 });
