@@ -7,6 +7,7 @@
     tools:context=".activities.CreatePostActivity">
 
     <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/tiet_edittext"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="top"
@@ -14,6 +15,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
