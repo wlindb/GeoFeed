@@ -11,6 +11,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.*
@@ -18,6 +21,7 @@ import se.umu.student.wili0037.geofeed.MainViewModel
 import se.umu.student.wili0037.geofeed.MainViewModelFactory
 import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
+import se.umu.student.wili0037.geofeed.fragments.MainFragment
 import se.umu.student.wili0037.geofeed.repository.Repository
 
 
@@ -25,15 +29,17 @@ import se.umu.student.wili0037.geofeed.repository.Repository
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-
+        /*
         viewModel.responsePosts.observe(this, Observer { response ->
             if(response.isSuccessful) {
                 if (response.body() == null) return@Observer
@@ -46,27 +52,39 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Response", response.code().toString())
             }
         })
+        */
         viewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         viewModel.geocoder = Geocoder(this)
         viewModel.initLocationSubscription()
         viewModel.cityName.observe(this, Observer { cityName ->
             updateSubTitle(cityName)
         })
-
+        navController = findNavController(R.id.fragment)
+        setupActionBarWithNavController(navController)
+        /*
         val fab: View = findViewById(R.id.floating_action_button)
         fab.setOnClickListener { view ->
             intent = Intent(this, CreatePostActivity::class.java)
             startActivity(intent)
         }
+        */
 
+        /*
+        val mainFragment = MainFragment()
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fl_fragment, mainFragment)
+            commit()
+        }
+        */
     }
+
 
     private fun updateSubTitle(cityName: String) {
         val actionBar = supportActionBar
         actionBar?.subtitle = cityName
     }
 
-
+/*
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return super.onCreateOptionsMenu(menu)
@@ -79,6 +97,13 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+ */
+
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
     override fun onPause() {
         super.onPause()
         viewModel.stopLocationSubscription()
@@ -88,4 +113,5 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         viewModel.startLocationSubscription(this, this)
     }
+
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
+import android.provider.Settings.Secure
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
@@ -36,6 +37,13 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         viewModelScope.launch {
             val response = repository.getPost()
             myResponse.value = response
+        }
+    }
+
+    fun createNewPost(uuid: String, body: String) {
+        if (cityName.value != null) {
+            val newPost = Post(uuid, cityName.value!!, "district", body, "Timestamp", listOf(""))
+            // Handle Post
         }
     }
 
