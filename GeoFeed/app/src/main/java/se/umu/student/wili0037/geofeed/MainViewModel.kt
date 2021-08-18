@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
+import android.os.Build
 import android.provider.Settings.Secure
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,12 +22,16 @@ import se.umu.student.wili0037.geofeed.repository.Repository
 import retrofit2.Response
 import se.umu.student.wili0037.geofeed.activities.MainActivity
 import se.umu.student.wili0037.geofeed.model.Posts
+import java.time.LocalDate
+import java.util.*
 
 class MainViewModel(private val repository: Repository): ViewModel() {
 
     val myResponse: MutableLiveData<Response<Post>> = MutableLiveData()
     val responsePosts: MutableLiveData<Response<Posts>> = MutableLiveData()
+    val responseNewPost: MutableLiveData<Response<Post>> = MutableLiveData()
     val cityName: MutableLiveData<String> = MutableLiveData("Unknown city")
+    val district: MutableLiveData<String> = MutableLiveData("Unknown district")
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationRequest: LocationRequest
@@ -42,8 +48,16 @@ class MainViewModel(private val repository: Repository): ViewModel() {
 
     fun createNewPost(uuid: String, body: String) {
         if (cityName.value != null) {
-            val newPost = Post(uuid, cityName.value!!, "district", body, "Timestamp", listOf(""))
+            //val timestamp = Calendar.getInstance().time.toString()
+            val timestamp = System.currentTimeMillis().toString()
+            val newPost = Post(uuid, cityName.value!!, district.value.toString(), body, timestamp, listOf(""))
+            Log.d("Response", "createNewPost: ${newPost.toString()}")
             // Handle Post
+            viewModelScope.launch {
+                val response = repository.postNewPost(newPost)
+                responseNewPost.value = response
+
+            }
         }
     }
 
@@ -79,8 +93,9 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 10)
         val address = addresses.find { address -> address.locality != null } ?: return
         if (address.locality != cityName.value) {
-            Log.d("Respone", "setCityNameFromLocation: ${address.locality}, ${cityName.value}")
+            Log.d("Respone", "setCityNameFromLocation: ${address.toString()}, ${cityName.value}")
             cityName.value = address.locality
+            district.value = address.featureName?.toString()
             getPosts(address.locality)
         }
     }

@@ -35,24 +35,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        /*
-        viewModel.responsePosts.observe(this, Observer { response ->
-            if(response.isSuccessful) {
-                if (response.body() == null) return@Observer
-                val rv_recyclerView: RecyclerView = findViewById(R.id.rv_recyclerView) as RecyclerView
-                rv_recyclerView.apply {
-                    layoutManager = LinearLayoutManager(context)
-                    adapter = RecyclerAdapter(response.body()!!.posts)
-                }
-            } else {
-                Log.d("Response", response.code().toString())
-            }
-        })
-        */
         viewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         viewModel.geocoder = Geocoder(this)
         viewModel.initLocationSubscription()
@@ -61,21 +46,6 @@ class MainActivity : AppCompatActivity() {
         })
         navController = findNavController(R.id.fragment)
         setupActionBarWithNavController(navController)
-        /*
-        val fab: View = findViewById(R.id.floating_action_button)
-        fab.setOnClickListener { view ->
-            intent = Intent(this, CreatePostActivity::class.java)
-            startActivity(intent)
-        }
-        */
-
-        /*
-        val mainFragment = MainFragment()
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.fl_fragment, mainFragment)
-            commit()
-        }
-        */
     }
 
 
@@ -83,21 +53,6 @@ class MainActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.subtitle = cityName
     }
-
-/*
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.main, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.profile -> Toast.makeText(this, "Profile Clicked", Toast.LENGTH_SHORT).show()
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
- */
 
 
     override fun onSupportNavigateUp(): Boolean {

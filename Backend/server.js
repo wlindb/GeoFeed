@@ -1,10 +1,25 @@
 const express = require('express')
 const app = express()
+require("dotenv").config(); // for loading environment variables
+const mongoose = require("mongoose");
+
 const port = 8080
+const Post = require("./models/Post");
+
 
 app.use(express.json());
 
-const mockData = [
+const MONGO_URI = process.env.MONGO_URI;
+//console.log(MONGO_URI)
+mongoose
+   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+   .then(() => console.log("Mongo Connection successful"))
+   .catch(err => console.log("err in mongoose connection", err));
+
+mongoose.set("useFindAndModify", false);
+mongoose.Promise = global.Promise;
+
+let mockData = [
     {
         uuid: "E2E2E2E2E2E2E2E2",
         location: "Stockholm",
@@ -70,12 +85,31 @@ app.get('/', (req, res) => {
 app.get('/posts/:location', (req, res) => {
     const { location } = req.params;
     const posts = getByLocation(location);
-    res.status(200).json({posts})
+    Post.find({location: location})
+        .then(posts => {
+            console.log(posts);
+            res.status(200).json({posts})
+        })
+        .catch(err => {
+            console.error(err)
+            res.status(500).json({msg: "error gettings posts from database"})
+        })
 });
 
-app.post('post', (req, res) => {
-    const { uuid, location, district, body, timestamp, comments } = req.body;
-    res.status(200).json({msg: "Success"})
+app.post('/post', (req, res) => {
+    // const { uuid, location, district, body, timestamp, comments } = req.body.post;
+    const newPost = req.body.post
+    const newDbPost = new Post(newPost);
+    newDbPost.save()
+        .then(post => {
+            res.status(200).json({post: post})
+        })
+        .catch(err => {
+            console.error(err)
+            res.status(500).json({msg: "error adding post to database"})
+        })
+    //mockData.push(newPost)
+    //res.status(200).json({post: newPost})
 });
 
 app.get('/post', (req, res) => {
