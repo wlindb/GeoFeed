@@ -40,7 +40,8 @@ class CreatePostFragment : Fragment() {
                 if (response.body() == null) return@observe
                 val post: Post = response.body()!!
                 Log.d("Response", response.code().toString())
-                Log.d("Response", post.toString())
+                Log.d("Response", "Post $post")
+                Log.d("Response", "Body " + response.body().toString())
             } else {
                 Toast.makeText(context, "Sorry, something went wrong while creating the post", Toast.LENGTH_SHORT).show()
                 Log.d("Response", response.code().toString())

@@ -98,10 +98,16 @@ app.get('/posts/:location', (req, res) => {
 
 app.post('/post', (req, res) => {
     // const { uuid, location, district, body, timestamp, comments } = req.body.post;
-    const newPost = req.body.post
-    const newDbPost = new Post(newPost);
+    const { uuid, location, district, body, timestamp } = req.body
+    console.log("=============body================");
+    console.log(req.body);
+    console.log("=================================");
+    const newDbPost = new Post({ uuid, location, district, body, timestamp, comments: []});
     newDbPost.save()
         .then(post => {
+            console.log("=============post================");
+            console.log(post);
+            console.log("=================================");
             res.status(200).json({post: post})
         })
         .catch(err => {

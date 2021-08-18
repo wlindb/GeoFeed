@@ -13,10 +13,6 @@ const commentModel = {
     timestamp: {
        type: String,
        required: true
-    },
-    solution: {
-       type: [String],
-       required: false 
     }
  };
 

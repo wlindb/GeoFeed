@@ -21,6 +21,7 @@ import se.umu.student.wili0037.geofeed.model.Post
 import se.umu.student.wili0037.geofeed.repository.Repository
 import retrofit2.Response
 import se.umu.student.wili0037.geofeed.activities.MainActivity
+import se.umu.student.wili0037.geofeed.model.Comment
 import se.umu.student.wili0037.geofeed.model.Posts
 import java.time.LocalDate
 import java.util.*
@@ -50,7 +51,8 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         if (cityName.value != null) {
             //val timestamp = Calendar.getInstance().time.toString()
             val timestamp = System.currentTimeMillis().toString()
-            val newPost = Post(uuid, cityName.value!!, district.value.toString(), body, timestamp, listOf(""))
+            val comment = listOf<Comment>()
+            val newPost = Post(uuid, cityName.value!!, district.value.toString(), body, timestamp, comment)
             Log.d("Response", "createNewPost: ${newPost.toString()}")
             // Handle Post
             viewModelScope.launch {

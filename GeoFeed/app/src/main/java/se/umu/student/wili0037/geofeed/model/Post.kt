@@ -6,5 +6,5 @@ data class Post (
     val district: String,
     val body: String,
     val timestamp: String,
-    val comments: List<String>
+    val comments: List<Comment>
 )
