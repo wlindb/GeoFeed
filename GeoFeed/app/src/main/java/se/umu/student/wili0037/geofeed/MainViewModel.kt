@@ -30,10 +30,10 @@ class MainViewModel(private val repository: Repository): ViewModel() {
 
     val myResponse: MutableLiveData<Response<Post>> = MutableLiveData()
     val responsePosts: MutableLiveData<Response<Posts>> = MutableLiveData()
-    val responseNewPost: MutableLiveData<Response<Post>> = MutableLiveData()
+    var responseNewPost: MutableLiveData<Response<Post>> = MutableLiveData()
     val cityName: MutableLiveData<String> = MutableLiveData("Unknown city")
     val district: MutableLiveData<String> = MutableLiveData("Unknown district")
-
+    val currentPost: MutableLiveData<Post> = MutableLiveData()
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var locationRequest: LocationRequest
     lateinit var locationCallback: LocationCallback
@@ -63,12 +63,25 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
+    fun getPosts() {
+        if (cityName.value.equals("Unknown city") || cityName.value == null) return
+        viewModelScope.launch {
+            Log.d("Respone", "getPosts: ${cityName.value}")
+            val response = repository.getPosts(cityName.value!!)
+            responsePosts.value = response
+        }
+    }
+
     private fun getPosts(city: String) {
         viewModelScope.launch {
             Log.d("Respone", "getPosts: ${cityName.value}")
             val response = repository.getPosts(city)
             responsePosts.value = response
         }
+    }
+
+    fun clearResponseNewPost() {
+        responseNewPost = MutableLiveData()
     }
 
     fun initLocationSubscription() {
@@ -118,5 +131,9 @@ class MainViewModel(private val repository: Repository): ViewModel() {
 
     fun stopLocationSubscription() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+    }
+
+    fun setCurrentPost(post: Post) {
+        currentPost.value = post
     }
 }

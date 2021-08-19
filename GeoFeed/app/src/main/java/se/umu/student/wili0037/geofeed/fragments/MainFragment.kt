@@ -19,6 +19,7 @@ import se.umu.student.wili0037.geofeed.MainViewModel
 import se.umu.student.wili0037.geofeed.MainViewModelFactory
 import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
+import se.umu.student.wili0037.geofeed.model.Post
 import se.umu.student.wili0037.geofeed.repository.Repository
 
 /**
@@ -57,13 +58,19 @@ class MainFragment : Fragment() {
                 val rv_recyclerView: RecyclerView = view.findViewById<RecyclerView>(R.id.rv_recyclerView) as RecyclerView
                 rv_recyclerView.apply {
                     layoutManager = LinearLayoutManager(context)
-                    adapter = RecyclerAdapter(response.body()!!.posts)
+                    adapter = RecyclerAdapter(response.body()!!.posts, onClickCallback = {post -> handleOnPostClicked(post, view)})
                 }
             } else {
                 Log.d("Response", response.code().toString())
             }
         })
         return view
+    }
+
+    private fun handleOnPostClicked(post: Post, view: View) {
+        Toast.makeText(context, "$post", Toast.LENGTH_SHORT).show()
+        viewModel.setCurrentPost(post)
+        Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_viewPostFragment)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -10,7 +10,7 @@ import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.model.Post
 
 
-class RecyclerAdapter (private var posts: List<Post>) :
+class RecyclerAdapter (private var posts: List<Post>, private val onClickCallback: ((Post) -> Unit)) :
 RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -21,7 +21,8 @@ RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
         init {
             itemView.setOnClickListener { v: View ->
                 val position: Int = adapterPosition
-                Toast.makeText(itemView.context, "You clicked on item ${position + 1}", Toast.LENGTH_SHORT).show()
+                onClickCallback.invoke(posts[position])
+                //Toast.makeText(itemView.context, "${posts[position]}", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -1,19 +1,19 @@
 package se.umu.student.wili0037.geofeed.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.provider.Settings.Secure
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.Navigation
 import com.google.android.material.textfield.TextInputEditText
 import se.umu.student.wili0037.geofeed.MainViewModel
 import se.umu.student.wili0037.geofeed.MainViewModelFactory
 import se.umu.student.wili0037.geofeed.R
-import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
 import se.umu.student.wili0037.geofeed.model.Post
 import se.umu.student.wili0037.geofeed.repository.Repository
 
@@ -42,6 +42,9 @@ class CreatePostFragment : Fragment() {
                 Log.d("Response", response.code().toString())
                 Log.d("Response", "Post $post")
                 Log.d("Response", "Body " + response.body().toString())
+                viewModel.clearResponseNewPost()
+                viewModel.getPosts()
+                Navigation.findNavController(view).navigate(R.id.action_createPostFragment_to_mainFragment)
             } else {
                 Toast.makeText(context, "Sorry, something went wrong while creating the post", Toast.LENGTH_SHORT).show()
                 Log.d("Response", response.code().toString())
@@ -70,6 +73,14 @@ class CreatePostFragment : Fragment() {
         if (text.isNotEmpty()) {
             Log.d("Submit", "handleOnSubmit: $text, $uuid")
             viewModel.createNewPost(uuid, text)
+            view?.findViewById<TextInputEditText>(R.id.tiet_edittext)?.hideKeyboard()
+
         }
     }
+
+    fun View.hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
+    }
+
 }
