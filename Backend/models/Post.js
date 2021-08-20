@@ -10,6 +10,14 @@ const commentModel = {
        type: String,
        required: true
     },
+    district: {
+       type: String,
+       required: true
+    },
+    location: {
+       type: String,
+       required: true
+    },
     timestamp: {
        type: String,
        required: true

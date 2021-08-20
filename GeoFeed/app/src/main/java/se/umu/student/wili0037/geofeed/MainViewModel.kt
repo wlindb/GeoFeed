@@ -52,7 +52,7 @@ class MainViewModel(private val repository: Repository): ViewModel() {
             //val timestamp = Calendar.getInstance().time.toString()
             val timestamp = System.currentTimeMillis().toString()
             val comment = listOf<Comment>()
-            val newPost = Post(uuid, cityName.value!!, district.value.toString(), body, timestamp, comment)
+            val newPost = Post(null, uuid, cityName.value!!, district.value.toString(), body, timestamp, comment)
             Log.d("Response", "createNewPost: ${newPost.toString()}")
             // Handle Post
             viewModelScope.launch {
@@ -135,5 +135,21 @@ class MainViewModel(private val repository: Repository): ViewModel() {
 
     fun setCurrentPost(post: Post) {
         currentPost.value = post
+    }
+
+    fun postComment(_id: String, uuid: String, commentText: String) {
+        Log.d("Response", "postComment: innan req")
+        if(cityName.value != null && district.value != null) {
+            val timestamp = System.currentTimeMillis().toString()
+            val newComment = Comment(uuid, commentText, timestamp, cityName.value.toString(), district.value.toString())
+            viewModelScope.launch {
+                val response = repository.postComment(_id, newComment)
+                if (response.isSuccessful && response.body() != null) {
+                    val post: Post = response.body()!!
+                    Log.d("Response", "postComment: $post")
+                    currentPost.value = post
+                }
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ package se.umu.student.wili0037.geofeed.fragments
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,12 +24,14 @@ import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.activities.adapters.CommentListRecyclerAdapter
 import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
 import se.umu.student.wili0037.geofeed.model.Comment
+import se.umu.student.wili0037.geofeed.model.Post
 import se.umu.student.wili0037.geofeed.repository.Repository
 import kotlin.random.Random
 
 class ViewPostFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
     private lateinit var commentInputEditText: TextInputEditText
+    private lateinit var currentPost: Post
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +55,7 @@ class ViewPostFragment : Fragment() {
         viewModel.currentPost.observe(viewLifecycleOwner, { post ->
             postTopic.text = post.body
             nrComments.text = post.comments.size.toString()
+            currentPost = post
             rv_recyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = CommentListRecyclerAdapter(post.comments)
@@ -66,7 +70,12 @@ class ViewPostFragment : Fragment() {
     }
 
     private fun handleOnCommentSubmit() {
+        Log.d("Response", "handleOnCommentSubmit text = ${commentInputEditText.text} _id= ${currentPost._id} ")
+        if(commentInputEditText.text.isNullOrBlank() || currentPost._id == null) return
         Toast.makeText(context, "${commentInputEditText.text}", Toast.LENGTH_SHORT).show()
+        val uuid = Settings.Secure.getString(context?.contentResolver, Settings.Secure.ANDROID_ID)
+        val commentText : String = commentInputEditText.text.toString()
+        viewModel.postComment(currentPost._id.toString(), uuid, commentText)
         commentInputEditText.setText("")
         commentInputEditText.hideKeyboard()
     }
@@ -76,9 +85,11 @@ class ViewPostFragment : Fragment() {
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
 
+    /*
     fun getMockComments(): List<Comment> {
         val str = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. "
 
         return List(40) { i -> Comment(i.toString(), str.substring(Random.nextInt(10, str.length-1)), "Timstamp $i") }
     }
+    */
 }

@@ -88,7 +88,21 @@ app.get('/posts/:location', (req, res) => {
     Post.find({location: location})
         .sort({ timestamp: "desc"})
         .then(posts => {
-            console.log(posts);
+            // console.log(posts);
+            res.status(200).json({posts})
+        })
+        .catch(err => {
+            console.error(err)
+            res.status(500).json({msg: "error gettings posts from database"})
+        })
+});
+
+app.get('/user/posts/:uuid', (req, res) => {
+    const { uuid } = req.params;
+    Post.find({uuid: uuid})
+        .sort({ timestamp: "desc"})
+        .then(posts => {
+            // console.log(posts);
             res.status(200).json({posts})
         })
         .catch(err => {
@@ -117,6 +131,21 @@ app.post('/post', (req, res) => {
         })
     //mockData.push(newPost)
     //res.status(200).json({post: newPost})
+});
+
+// comment/{_id}
+app.post('/comment/:id', (req, res) => {
+    const _id = req.params.id;
+    const comment = req.body;
+    console.log(_id, comment);
+    Post.findByIdAndUpdate(_id, {$push: {"comments": comment}}, {safe: true, upsert: true, new: true}, (err, post) => {
+        if(err) {
+            console.error(err)
+            res.status(500).json({msg: "error adding comment to database"})
+        } else {
+            res.status(200).json(post)
+        }
+    });
 });
 
 app.get('/post', (req, res) => {
