@@ -24,10 +24,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/darker_gray"
                 android:textSize="14sp"
                 android:drawablePadding="4dp"
-                app:drawableStartCompat="@drawable/ic_baseline_place_12"/>
+                app:drawableStartCompat="@drawable/ic_baseline_place_12"
+                android:drawableTint="?colorPrimary"/>
             <TextView
                 android:id="@+id/tv_postBody"
                 android:layout_width="wrap_content"
@@ -48,7 +49,8 @@
                 android:textSize="12sp"
                 android:gravity="center"
                 android:drawablePadding="4dp"
-                app:drawableStartCompat="@drawable/ic_round_comment_14" />
+                app:drawableStartCompat="@drawable/ic_round_comment_14"
+                android:drawableTint="?colorPrimary"/>
         </LinearLayout>
     </RelativeLayout>
 

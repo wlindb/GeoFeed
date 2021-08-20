@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
 import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.model.Comment
 
@@ -14,6 +15,7 @@ class CommentListRecyclerAdapter (private var comments: List<Comment>) :
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val comment: TextView = itemView.findViewById(R.id.tv_comment)
+        val district : TextView = itemView.findViewById(R.id.tv_district)
 
         init {
             itemView.setOnClickListener { v: View ->
@@ -30,6 +32,7 @@ class CommentListRecyclerAdapter (private var comments: List<Comment>) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.comment.text = comments[position].comment
+        holder.district.text = comments[position].district
     }
 
     override fun getItemCount(): Int {
