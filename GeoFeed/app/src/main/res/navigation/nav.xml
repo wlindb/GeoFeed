@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_mainFragment_to_viewPostFragment"
             app:destination="@id/viewPostFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_yourPostsFragment"
+            app:destination="@id/yourPostsFragment" />
     </fragment>
     <fragment
         android:id="@+id/createPostFragment"
@@ -36,10 +39,25 @@
     <fragment
         android:id="@+id/viewPostFragment"
         android:name="se.umu.student.wili0037.geofeed.fragments.ViewPostFragment"
-        android:label="fragment_view_post"
+        android:label="Thread"
         tools:layout="@layout/fragment_view_post" >
         <action
             android:id="@+id/action_viewPostFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_viewPostFragment_to_yourPostsFragment"
+            app:destination="@id/yourPostsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/yourPostsFragment"
+        android:name="se.umu.student.wili0037.geofeed.fragments.YourPostsFragment"
+        android:label="Your posts"
+        tools:layout="@layout/fragment_your_posts" >
+        <action
+            android:id="@+id/action_yourPostsFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_yourPostsFragment_to_viewPostFragment"
+            app:destination="@id/viewPostFragment" />
     </fragment>
 </navigation>

@@ -23,4 +23,8 @@ class Repository {
     suspend fun postComment(_id: String, comment: Comment): Response<Post> {
         return RetrofitInstance.api.postComment(_id, comment)
     }
+
+    suspend fun getPostsByUUID(uuid: String): Response<Posts> {
+        return RetrofitInstance.api.getPostsByUUID(uuid)
+    }
 }

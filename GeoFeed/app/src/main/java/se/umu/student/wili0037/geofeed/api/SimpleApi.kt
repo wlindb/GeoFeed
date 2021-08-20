@@ -17,6 +17,9 @@ interface SimpleApi {
     @GET("posts/{cityName}")
     suspend fun getPosts(@Path("cityName") cityName: String): Response<Posts>
 
+    @GET("user/posts/{uuid}")
+    suspend fun getPostsByUUID(@Path("uuid") uuid: String): Response<Posts>
+
     @POST("post")
     suspend fun postNewPost(@Body post: Post): Response<Post>
 

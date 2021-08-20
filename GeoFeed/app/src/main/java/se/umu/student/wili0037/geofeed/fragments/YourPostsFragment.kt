@@ -1,21 +1,14 @@
 package se.umu.student.wili0037.geofeed.fragments
-
-import android.location.Geocoder
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
-import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.Button
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.LocationServices
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import se.umu.student.wili0037.geofeed.MainViewModel
 import se.umu.student.wili0037.geofeed.MainViewModelFactory
 import se.umu.student.wili0037.geofeed.R
@@ -23,19 +16,12 @@ import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
 import se.umu.student.wili0037.geofeed.model.Post
 import se.umu.student.wili0037.geofeed.repository.Repository
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MainFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class MainFragment : Fragment() {
 
+class YourPostsFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-
     }
 
     override fun onCreateView(
@@ -43,17 +29,13 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        //val fab: View = findViewById(R.id.floating_action_button)
-        val view = inflater.inflate(R.layout.fragment_main, container, false)
-
-        val fab = view.findViewById<FloatingActionButton>(R.id.floating_action_button)
-        fab.setOnClickListener { Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_createPostFragment) }
-
+        val view = inflater.inflate(R.layout.fragment_your_posts, container, false)
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
+
         viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
 
-        viewModel.responsePosts.observe(viewLifecycleOwner, { response ->
+        viewModel.responseUserPosts.observe(viewLifecycleOwner, { response ->
             if(response.isSuccessful) {
                 if (response.body() == null) return@observe
                 val rv_recyclerView: RecyclerView = view.findViewById<RecyclerView>(R.id.rv_recyclerView) as RecyclerView
@@ -69,25 +51,7 @@ class MainFragment : Fragment() {
     }
 
     private fun handleOnPostClicked(post: Post, view: View) {
-        Toast.makeText(context, "$post", Toast.LENGTH_SHORT).show()
         viewModel.setCurrentPost(post)
-        Navigation.findNavController(view).navigate(R.id.action_mainFragment_to_viewPostFragment)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.main, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.profile -> {
-                val uuid = Settings.Secure.getString(context?.contentResolver, Settings.Secure.ANDROID_ID)
-                viewModel.getPostsByUUID(uuid)
-                Navigation.findNavController(requireView()).navigate(R.id.action_mainFragment_to_yourPostsFragment)
-                //Toast.makeText(context, "Profile Clicked", Toast.LENGTH_SHORT).show()
-            }
-        }
-        return super.onOptionsItemSelected(item)
+        Navigation.findNavController(view).navigate(R.id.action_yourPostsFragment_to_viewPostFragment)
     }
 }

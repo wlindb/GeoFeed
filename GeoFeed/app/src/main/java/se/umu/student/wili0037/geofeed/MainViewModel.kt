@@ -30,6 +30,7 @@ class MainViewModel(private val repository: Repository): ViewModel() {
 
     val myResponse: MutableLiveData<Response<Post>> = MutableLiveData()
     val responsePosts: MutableLiveData<Response<Posts>> = MutableLiveData()
+    val responseUserPosts: MutableLiveData<Response<Posts>> = MutableLiveData()
     var responseNewPost: MutableLiveData<Response<Post>> = MutableLiveData()
     val cityName: MutableLiveData<String> = MutableLiveData("Unknown city")
     val district: MutableLiveData<String> = MutableLiveData("Unknown district")
@@ -150,6 +151,14 @@ class MainViewModel(private val repository: Repository): ViewModel() {
                     currentPost.value = post
                 }
             }
+        }
+    }
+
+    fun getPostsByUUID(uuid: String) {
+        viewModelScope.launch {
+            val response = repository.getPostsByUUID(uuid)
+            responseUserPosts.value = response
+            //responsePosts.value = response
         }
     }
 }

@@ -60,6 +60,7 @@ class ViewPostFragment : Fragment() {
                 layoutManager = LinearLayoutManager(context)
                 adapter = CommentListRecyclerAdapter(post.comments)
             }
+            viewModel.getPosts()
         })
 
         // https://material.io/components/text-fields/android#using-text-fields
