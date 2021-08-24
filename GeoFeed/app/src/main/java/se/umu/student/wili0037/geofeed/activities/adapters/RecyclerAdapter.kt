@@ -22,7 +22,6 @@ RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
             itemView.setOnClickListener { v: View ->
                 val position: Int = adapterPosition
                 onClickCallback.invoke(posts[position])
-                //Toast.makeText(itemView.context, "${posts[position]}", Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -22,7 +22,6 @@ class CreatePostFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-
     }
 
     override fun onCreateView(
@@ -38,18 +37,11 @@ class CreatePostFragment : Fragment() {
         viewModel.responseNewPost.observe(viewLifecycleOwner, { response ->
             if(response.isSuccessful) {
                 if (response.body() == null) return@observe
-                val post: Post = response.body()!!
-                Log.d("Response", response.code().toString())
-                Log.d("Response", "Post $post")
-                Log.d("Response", "Body " + response.body().toString())
                 viewModel.clearResponseNewPost()
                 viewModel.getPosts()
                 Navigation.findNavController(view).navigate(R.id.action_createPostFragment_to_mainFragment)
             } else {
                 Toast.makeText(context, "Sorry, something went wrong while creating the post", Toast.LENGTH_SHORT).show()
-                Log.d("Response", response.code().toString())
-                Log.d("Response", response.errorBody().toString())
-                Log.d("Response", response.body().toString())
             }
         })
         return view
@@ -62,7 +54,7 @@ class CreatePostFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.submit -> handleOnSubmit() //Toast.makeText(context, "Submit Clicked", Toast.LENGTH_SHORT).show()
+            R.id.submit -> handleOnSubmit()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -71,16 +63,13 @@ class CreatePostFragment : Fragment() {
         val text = view?.findViewById<TextInputEditText>(R.id.tiet_edittext)?.text.toString()
         val uuid = Secure.getString(context?.contentResolver, Secure.ANDROID_ID)
         if (text.isNotEmpty()) {
-            Log.d("Submit", "handleOnSubmit: $text, $uuid")
             viewModel.createNewPost(uuid, text)
             view?.findViewById<TextInputEditText>(R.id.tiet_edittext)?.hideKeyboard()
-
         }
     }
 
-    fun View.hideKeyboard() {
+    private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
-
 }

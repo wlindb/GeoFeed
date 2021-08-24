@@ -34,16 +34,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        // Init view model
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        // Init location client
         viewModel.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         viewModel.geocoder = Geocoder(this)
         viewModel.initLocationSubscription()
+        // Observe when user entered a new city
         viewModel.cityName.observe(this, Observer { cityName ->
             updateSubTitle(cityName)
         })
+        // Set up navigation controller
         navController = findNavController(R.id.fragment)
         setupActionBarWithNavController(navController)
     }
@@ -53,7 +56,6 @@ class MainActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.subtitle = cityName
     }
-
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()

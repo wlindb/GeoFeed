@@ -34,10 +34,6 @@ class ViewPostFragment : Fragment() {
     private lateinit var currentPost: Post
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,9 +67,7 @@ class ViewPostFragment : Fragment() {
     }
 
     private fun handleOnCommentSubmit() {
-        Log.d("Response", "handleOnCommentSubmit text = ${commentInputEditText.text} _id= ${currentPost._id} ")
         if(commentInputEditText.text.isNullOrBlank() || currentPost._id == null) return
-        Toast.makeText(context, "${commentInputEditText.text}", Toast.LENGTH_SHORT).show()
         val uuid = Settings.Secure.getString(context?.contentResolver, Settings.Secure.ANDROID_ID)
         val commentText : String = commentInputEditText.text.toString()
         viewModel.postComment(currentPost._id.toString(), uuid, commentText)
@@ -81,16 +75,8 @@ class ViewPostFragment : Fragment() {
         commentInputEditText.hideKeyboard()
     }
 
-    fun View.hideKeyboard() {
+    private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
     }
-
-    /*
-    fun getMockComments(): List<Comment> {
-        val str = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. "
-
-        return List(40) { i -> Comment(i.toString(), str.substring(Random.nextInt(10, str.length-1)), "Timstamp $i") }
-    }
-    */
 }

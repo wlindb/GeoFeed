@@ -4,10 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
-import android.os.Build
-import android.provider.Settings.Secure
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -23,38 +19,25 @@ import retrofit2.Response
 import se.umu.student.wili0037.geofeed.activities.MainActivity
 import se.umu.student.wili0037.geofeed.model.Comment
 import se.umu.student.wili0037.geofeed.model.Posts
-import java.time.LocalDate
-import java.util.*
 
 class MainViewModel(private val repository: Repository): ViewModel() {
 
-    val myResponse: MutableLiveData<Response<Post>> = MutableLiveData()
     val responsePosts: MutableLiveData<Response<Posts>> = MutableLiveData()
     val responseUserPosts: MutableLiveData<Response<Posts>> = MutableLiveData()
     var responseNewPost: MutableLiveData<Response<Post>> = MutableLiveData()
     val cityName: MutableLiveData<String> = MutableLiveData("Unknown city")
-    val district: MutableLiveData<String> = MutableLiveData("Unknown district")
+    private val district: MutableLiveData<String> = MutableLiveData("Unknown district")
     val currentPost: MutableLiveData<Post> = MutableLiveData()
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    lateinit var locationRequest: LocationRequest
-    lateinit var locationCallback: LocationCallback
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
     lateinit var geocoder: Geocoder
-
-
-    fun getPost() {
-        viewModelScope.launch {
-            val response = repository.getPost()
-            myResponse.value = response
-        }
-    }
 
     fun createNewPost(uuid: String, body: String) {
         if (cityName.value != null) {
-            //val timestamp = Calendar.getInstance().time.toString()
             val timestamp = System.currentTimeMillis().toString()
             val comment = listOf<Comment>()
             val newPost = Post(null, uuid, cityName.value!!, district.value.toString(), body, timestamp, comment)
-            Log.d("Response", "createNewPost: ${newPost.toString()}")
             // Handle Post
             viewModelScope.launch {
                 val response = repository.postNewPost(newPost)
@@ -67,7 +50,6 @@ class MainViewModel(private val repository: Repository): ViewModel() {
     fun getPosts() {
         if (cityName.value.equals("Unknown city") || cityName.value == null) return
         viewModelScope.launch {
-            Log.d("Respone", "getPosts: ${cityName.value}")
             val response = repository.getPosts(cityName.value!!)
             responsePosts.value = response
         }
@@ -75,7 +57,6 @@ class MainViewModel(private val repository: Repository): ViewModel() {
 
     private fun getPosts(city: String) {
         viewModelScope.launch {
-            Log.d("Respone", "getPosts: ${cityName.value}")
             val response = repository.getPosts(city)
             responsePosts.value = response
         }
@@ -109,7 +90,6 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         val addresses = geocoder.getFromLocation(location.latitude, location.longitude, 10)
         val address = addresses.find { address -> address.locality != null } ?: return
         if (address.locality != cityName.value) {
-            Log.d("Respone", "setCityNameFromLocation: ${address.toString()}, ${cityName.value}")
             cityName.value = address.locality
             district.value = address.featureName?.toString()
             getPosts(address.locality)
@@ -139,7 +119,6 @@ class MainViewModel(private val repository: Repository): ViewModel() {
     }
 
     fun postComment(_id: String, uuid: String, commentText: String) {
-        Log.d("Response", "postComment: innan req")
         if(cityName.value != null && district.value != null) {
             val timestamp = System.currentTimeMillis().toString()
             val newComment = Comment(uuid, commentText, timestamp, cityName.value.toString(), district.value.toString())
@@ -147,7 +126,6 @@ class MainViewModel(private val repository: Repository): ViewModel() {
                 val response = repository.postComment(_id, newComment)
                 if (response.isSuccessful && response.body() != null) {
                     val post: Post = response.body()!!
-                    Log.d("Response", "postComment: $post")
                     currentPost.value = post
                 }
             }
@@ -158,7 +136,6 @@ class MainViewModel(private val repository: Repository): ViewModel() {
         viewModelScope.launch {
             val response = repository.getPostsByUUID(uuid)
             responseUserPosts.value = response
-            //responsePosts.value = response
         }
     }
 }

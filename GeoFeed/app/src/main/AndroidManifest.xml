@@ -14,14 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GeoFeed"
         >
-        <activity
-            android:name=".activities.CreatePostActivity"
-            android:parentActivityName="se.umu.student.wili0037.geofeed.activities.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="se.umu.student.wili0037.geofeed.activities.MainActivity" />
-
-        </activity>
         <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

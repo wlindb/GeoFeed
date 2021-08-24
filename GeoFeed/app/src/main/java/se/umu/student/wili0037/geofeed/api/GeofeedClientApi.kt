@@ -9,10 +9,7 @@ import se.umu.student.wili0037.geofeed.model.Comment
 import se.umu.student.wili0037.geofeed.model.Post
 import se.umu.student.wili0037.geofeed.model.Posts
 
-interface SimpleApi {
-
-    @GET("post")
-    suspend fun getPost(): Response<Post>
+interface GeofeedClientApi {
 
     @GET("posts/{cityName}")
     suspend fun getPosts(@Path("cityName") cityName: String): Response<Posts>

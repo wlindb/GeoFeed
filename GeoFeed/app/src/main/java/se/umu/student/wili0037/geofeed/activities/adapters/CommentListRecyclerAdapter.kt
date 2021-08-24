@@ -16,13 +16,6 @@ class CommentListRecyclerAdapter (private var comments: List<Comment>) :
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val comment: TextView = itemView.findViewById(R.id.tv_comment)
         val district : TextView = itemView.findViewById(R.id.tv_district)
-
-        init {
-            itemView.setOnClickListener { v: View ->
-                val position: Int = adapterPosition
-                Toast.makeText(itemView.context, "You clicked on item ${position + 1}", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

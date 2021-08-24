@@ -20,10 +20,6 @@ import se.umu.student.wili0037.geofeed.repository.Repository
 class YourPostsFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

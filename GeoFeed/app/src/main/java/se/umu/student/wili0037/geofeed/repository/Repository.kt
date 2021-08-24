@@ -8,10 +8,6 @@ import se.umu.student.wili0037.geofeed.model.Posts
 
 class Repository {
 
-    suspend fun getPost(): Response<Post> {
-        return RetrofitInstance.api.getPost()
-    }
-
     suspend fun getPosts(cityName: String): Response<Posts> {
         return RetrofitInstance.api.getPosts(cityName)
     }
