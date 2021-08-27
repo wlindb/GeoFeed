@@ -41,22 +41,23 @@ class ViewPostFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_view_post, container, false)
         commentInputEditText = view.findViewById(R.id.edit_comment)
-        val repository = Repository()
-        val viewModelFactory = MainViewModelFactory(repository)
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
+
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
         val postTopic = view.findViewById<TextView>(R.id.tv_post)
         val nrComments = view.findViewById<TextView>(R.id.tv_nrComments)
-        val rv_recyclerView: RecyclerView = view.findViewById<RecyclerView>(R.id.rv_comments) as RecyclerView
+        val commentRecyclerView: RecyclerView = view.findViewById(R.id.rv_comments) as RecyclerView
         viewModel.currentPost.observe(viewLifecycleOwner, { post ->
             postTopic.text = post.body
             nrComments.text = post.comments.size.toString()
             currentPost = post
-            rv_recyclerView.apply {
+            commentRecyclerView.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = CommentListRecyclerAdapter(post.comments)
             }
+            val uuid = Settings.Secure.getString(context?.contentResolver, Settings.Secure.ANDROID_ID)
             viewModel.getPosts()
+            viewModel.getPostsByUUID(uuid)
         })
 
         // https://material.io/components/text-fields/android#using-text-fields

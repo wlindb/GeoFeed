@@ -10,11 +10,9 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import se.umu.student.wili0037.geofeed.MainViewModel
-import se.umu.student.wili0037.geofeed.MainViewModelFactory
 import se.umu.student.wili0037.geofeed.R
 import se.umu.student.wili0037.geofeed.activities.adapters.RecyclerAdapter
 import se.umu.student.wili0037.geofeed.model.Post
-import se.umu.student.wili0037.geofeed.repository.Repository
 
 
 class YourPostsFragment : Fragment() {
@@ -26,16 +24,14 @@ class YourPostsFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_your_posts, container, false)
-        val repository = Repository()
-        val viewModelFactory = MainViewModelFactory(repository)
 
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
         viewModel.responseUserPosts.observe(viewLifecycleOwner, { response ->
             if(response.isSuccessful) {
                 if (response.body() == null) return@observe
-                val rv_recyclerView: RecyclerView = view.findViewById<RecyclerView>(R.id.rv_recyclerView) as RecyclerView
-                rv_recyclerView.apply {
+                val postsRecyclerView: RecyclerView = view.findViewById<RecyclerView>(R.id.rv_recyclerView) as RecyclerView
+                postsRecyclerView.apply {
                     layoutManager = LinearLayoutManager(context)
                     adapter = RecyclerAdapter(response.body()!!.posts, onClickCallback = {post -> handleOnPostClicked(post, view)})
                 }

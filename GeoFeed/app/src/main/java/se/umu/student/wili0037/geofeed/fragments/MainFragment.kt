@@ -1,20 +1,14 @@
 package se.umu.student.wili0037.geofeed.fragments
 
-import android.location.Geocoder
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.widget.Button
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import se.umu.student.wili0037.geofeed.MainViewModel
 import se.umu.student.wili0037.geofeed.MainViewModelFactory
@@ -48,15 +42,13 @@ class MainFragment : Fragment() {
 
         val repository = Repository()
         val viewModelFactory = MainViewModelFactory(repository)
-        viewModel =
-            ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
 
         viewModel.responsePosts.observe(viewLifecycleOwner, { response ->
             if (response.isSuccessful) {
                 if (response.body() == null) return@observe
-                val rv_recyclerView: RecyclerView =
-                    view.findViewById<RecyclerView>(R.id.rv_recyclerView) as RecyclerView
-                rv_recyclerView.apply {
+                val postsRecyclerView: RecyclerView = view.findViewById(R.id.rv_recyclerView) as RecyclerView
+                postsRecyclerView.apply {
                     layoutManager = LinearLayoutManager(context)
                     adapter = RecyclerAdapter(
                         response.body()!!.posts,

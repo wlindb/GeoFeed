@@ -30,9 +30,7 @@ class CreatePostFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_create_post, container, false)
-        val repository = Repository()
-        val viewModelFactory = MainViewModelFactory(repository)
-        viewModel = ViewModelProvider(requireActivity(), viewModelFactory).get(MainViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
 
         viewModel.responseNewPost.observe(viewLifecycleOwner, { response ->
             if(response.isSuccessful) {
